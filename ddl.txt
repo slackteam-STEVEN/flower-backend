@@ -1,0 +1,21 @@
+CREATE DATABASE twitter;
+
+USE twitter;
+
+CREATE TABLE `follow` (
+`from_account_id` VARCHAR(16) NOT NULL,
+`to_account_id` VARCHAR(16) NOT NULL,
+`following` BOOLEAN NOT NULL,
+`create_ts` DATETIME,
+`update_ts` DATETIME
+);
+
+CREATE TABLE `account_info` (
+`account_id` VARCHAR(16) NOT NULL,
+`screen_name` VARCHAR(30) NOT NULL,
+`user_name` VARCHAR(30) NOT NULL,
+`icon_image_url` TEXT,
+`description` VARCHAR(200),
+`follow_count` INT(8),
+`follower_count` INT(8)
+);
