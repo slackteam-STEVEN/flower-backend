@@ -1,10 +1,14 @@
 import tweepy
+from requests_oauthlib import OAuth1Session
+import json
+import configparser
 
-# 認証キーの設定
-consumer_key = "2oNzJD7rceT2iWxhKxR9tSZPm"
-consumer_secret = "zGCwDZ5ihlix0FFCEDJK5Yfza9j4IGm4uyQKOWpueakbBGoz1T"
-access_token = "922767128016560129-JLi7KH5cUX52a8kJC8j5Bd8CJnPrPdY"
-access_token_secret = "3cakJdDZGkdomVE3B5jmeUMp6xZlCElBfvlmTmeKvcUyi"
+key_ini = configparser.ConfigParser()
+key_ini.read('key.ini')
+consumer_key = key_ini['DEFAULT']['con_key']
+consumer_secret =key_ini['DEFAULT']['secret']
+access_token =key_ini['DEFAULT']['token']
+access_token_secret =key_ini['DEFAULT']['token_secret']
 
 # OAuth認証
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -14,7 +18,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
 # フォロー解除
-user = input("「@ユーザー名」を入力してください：")
+user=getfront
 try:
     api.destroy_friendship(screen_name=user)
     print("フォローを解除しました")

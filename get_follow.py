@@ -1,18 +1,32 @@
-import tweepy
-cursor = -1
-while cursor != 0:
-    auth = tweepy.OAuthHandler("2oNzJD7rceT2iWxhKxR9tSZPm", 'zGCwDZ5ihlix0FFCEDJK5Yfza9j4IGm4uyQKOWpueakbBGoz1T')
-    auth.set_access_token('922767128016560129-JLi7KH5cUX52a8kJC8j5Bd8CJnPrPdY','3cakJdDZGkdomVE3B5jmeUMp6xZlCElBfvlmTmeKvcUyi')
-    api = tweepy.API(auth, wait_on_rate_limit=True)
-    itr = tweepy.Cursor(api.friends_ids, id=input("＠以降のユーザー名を入力してください:"), cursor=cursor).pages()
-    try:
-        for user_id in itr.next():
-            try:
-                user = api.get_user(user_id)
-                user_info = [user.id_str, user.screen_name, user.name,user.following,user.friends_count,user.followers_count,]
-                print(user_info)
-            except tweepy.error.TweepError as e:
-                print(e.reason)
-    except ConnectionError as e:
-        print(e.reason)
-    cursor = itr.next_cursor
+from requests_oauthlib import OAuth1Session
+import json
+import configparser
+
+key_ini = configparser.ConfigParser()
+key_ini.read('key.ini')
+consumer_key = key_ini['DEFAULT']['con_key']
+consumer_secret =key_ini['DEFAULT']['secret']
+access_token =key_ini['DEFAULT']['token']
+access_token_secret =key_ini['DEFAULT']['token_secret']
+twitter = OAuth1Session(consumer_key,consumer_secret,access_token,access_token_secret) 
+url = "https://api.twitter.com/1.1/friends/list.json"
+req = twitter.get(url)
+
+keys = ["id", "name", "screen_name", "description", "friends_count", "followers_count", "profile_image_url_https"]
+
+if req.status_code == 200:
+    user_info = json.loads(req.text)
+#    for tweet in user_info:
+#        print(user_info)
+
+    for user in user_info["users"]:
+        result = {}
+        
+        for key in keys:
+            result[key] = user[key]
+            
+        print(result)
+        print("\n")
+
+else:
+    print("ERROR: %d" % req.status_code)
