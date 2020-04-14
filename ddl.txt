@@ -1,0 +1,24 @@
+CREATE DATABASE flower; 
+
+USE flower;
+
+CREATE TABLE `follow` (
+`follow_id` INT AUTO_INCREMENT PRIMARY KEY, 
+`from_account_id` VARCHAR(16) NOT NULL comment 'フォロー元',
+`to_account_id` VARCHAR(16) NOT NULL comment 'フォロー先',
+`following` BOOLEAN NOT NULL comment 'フォロー中',
+`create_ts` DATETIME,
+`update_ts` DATETIME
+);
+
+CREATE TABLE `account_info` (
+`account_id` VARCHAR(16) NOT NULL comment 'アカウント個別id',
+`screen_name` VARCHAR(30) NOT NULL comment '@id',
+`user_name` VARCHAR(30) NOT NULL comment '表示NAME',
+`icon_image_url` TEXT comment 'アイコン画像url',
+`description` VARCHAR(200) comment '自己紹介文',
+`follow_count` INT(8) comment 'フォロー数',
+`follower_count` INT(8) comment 'フォロワー数',
+`account_create_ts` DATETIME,
+`account_update_ts` DATETIME
+);
