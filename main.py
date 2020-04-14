@@ -70,7 +70,6 @@ def access():
 def register():
     auth = tweepy.OAuthHandler(ck, cs, callback_url)
     #callbackURLにアクセスする
-    #予めDBに保存していたoauth_tokenと一致するレコードにverifierを保存する。
     # アクセスしたタイミングでフロントからoauth_verifier,ランダム文字列を取得する
     random_key = request.args.get("random_key", "")
     oauth_verifier = request.args.get("oauth_verifier", "")
@@ -82,7 +81,6 @@ def register():
     auth.request_token = request_token[0]
     
     #verifierを呼び出し、アクセストークンを取得
-
     auth.get_access_token(oauth_verifier)
     
     at = auth.access_token
@@ -100,7 +98,7 @@ def register():
     #topページへリダイレクト
     return redirect("http://127.0.0.1:8000/following")
 
-
+'''
 @app.route('/get_follow',methods=['GET'])
 def get_follows():
     #DBに保存されたランダム文字列をキーとして生データ（アクセストークン）を持ってくる
@@ -116,7 +114,7 @@ def get_followers():
     access_token_secret = 'SELECT  access_token_secret auth WHERE random_key = %s'
     follower_list = get_follower(access_token, access_token_secret)
     return follower_list
-
+'''
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000)
