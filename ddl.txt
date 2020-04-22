@@ -1,0 +1,12 @@
+CREATE DATABASE flower; 
+
+USE flower;
+
+CREATE TABLE `auth` (
+`user_id` VARCHAR(50) NOT NULL PRIMARY KEY,
+`screen_name` VARCHAR(50) NOT NULL,
+`request_token` VARCHAR(200),
+`access_token` VARCHAR(100),
+`access_token_secret` VARCHAR(100),
+'random_key' VARCHAR(100)
+);

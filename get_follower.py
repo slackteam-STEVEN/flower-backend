@@ -1,32 +1,47 @@
-from requests_oauthlib import OAuth1Session
+import tweepy
 import json
-import configparser
+import MySQLdb
+from flask import Flask, redirect, request
+from db import conn_f
 
-key_ini = configparser.ConfigParser()
-key_ini.read('key.ini')
-consumer_key = key_ini['DEFAULT']['con_key']
-consumer_secret =key_ini['DEFAULT']['secret']
-access_token =key_ini['DEFAULT']['token']
-access_token_secret =key_ini['DEFAULT']['token_secret']
-twitter = OAuth1Session(consumer_key,consumer_secret,access_token,access_token_secret) 
-url = "https://api.twitter.com/1.1/followers/list.json"
-req = twitter.get(url)
-
-keys = ["id", "name", "screen_name", "description", "friends_count", "followers_count","following","profile_image_url_https"]
-
-if req.status_code == 200:
-    user_info = json.loads(req.text)
-#    for tweet in user_info:
-#        print(user_info)
-
-    for user in user_info["users"]:
-        result = {}
-        
-        for key in keys:
-            result[key] = user[key]
-            
-        print(result)
-        print("\n")
-
-else:
-    print("ERROR: %d" % req.status_code)
+def get_follower(ck,cs):
+    random_key = request.args.get('random_key','')
+    conn = conn_f()
+    cursor = conn.cursor()
+    sql = 'SELECT access_token, access_token_secret,screen_name FROM auth WHERE random_key=%s'
+    cursor.execute(sql,(random_key,))
+    token = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    access_token = token[0]
+    access_token_secret = token[1]
+    screen_name = token[2]
+    user_info_keys = ["id", "name", "screen_name", "description", "friends_count", "followers_count","following","profile_image_url_https",]
+    cursor = -1
+    while cursor != 0:
+        #OAuthHandlerインスタンスの作成
+        auth = tweepy.OAuthHandler(ck,cs)
+        #API申請で取得したキー入れる
+        auth.set_access_token(access_token, access_token_secret) 
+        api = tweepy.API(auth, wait_on_rate_limit=True) #認証
+        itr = tweepy.Cursor(api.followers_ids, id=screen_name, cursor=cursor).pages()
+        user_info_list = []
+        for follower_id in itr.next():
+            try:
+                user = api.get_user(follower_id)
+                print(user)
+                user_info = {}
+                for user_info_key in user_info_keys:
+                    user_info[user_info_key] = user._json[user_info_key]
+                user_info_list.append(user_info)            #user_info_listにuser_infoを入れ込む
+            except tweepy.error.TweepError as e:
+                result = {"status_code":400}
+                result = json.dumps(result)
+                return result
+            except ConnectionError as e:
+                result = {"status_code":500}
+                result = json.dumps(result)
+                return result
+        result = {"status_code":200,"context":user_info_list}
+        result = json.dumps(result)
+        return result
