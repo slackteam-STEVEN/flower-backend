@@ -6,13 +6,11 @@ from flask import Flask, redirect, request
 
 def get_follow(ck,cs):
     random_key = request.args.get('random_key','')
-    conn = conn_f()
-    cursor = conn.cursor()
-    sql = 'SELECT access_token, access_token_secret,screen_name FROM auth WHERE random_key=%s'
-    cursor.execute(sql,(random_key,))
-    token = cursor.fetchone()
-    cursor.close()
-    conn.close()
+    with conn_f() as conn:
+        with conn.cursor() as cursor:
+            sql = 'SELECT access_token, access_token_secret,screen_name FROM auth WHERE random_key=%s'
+            cursor.execute(sql,(random_key,))
+            token = cursor.fetchone()
     access_token = token[0]
     access_token_secret = token[1]
     screen_name = token[2]
