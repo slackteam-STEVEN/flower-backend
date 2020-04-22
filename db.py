@@ -12,11 +12,3 @@ def conn_f():
         charset = 'utf8'
     ) 
     return con
-
-# Debug 
-'''
-if conn_f():
-    print('接続成功')
-else:
-    print('接続失敗')
-'''
