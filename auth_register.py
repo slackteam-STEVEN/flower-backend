@@ -43,7 +43,7 @@ def auth_register(ck,cs):
                 return json.dumps({'status_code': 1002 , 'message' : 'MySQL error'})
                 
             # topページへリダイレクト
-            return json.dumps({'status_code': 200 }) 
+            return json.dumps({'status_code': 200 , 'message : 'OK'}) 
             
         except MySQLdb.Error:
             return json.dumps({'status_code': 1002 , 'message' : 'MySQL error'})
