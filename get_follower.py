@@ -27,7 +27,6 @@ def get_follower(ck,cs,random_key):
         for follower_id in itr.next():
             try:
                 user = api.get_user(follower_id)
-                print(user)
                 user_info = {}
                 for user_info_key in user_info_keys:
                     user_info[user_info_key] = user._json[user_info_key]
