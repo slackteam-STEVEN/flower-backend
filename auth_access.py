@@ -13,7 +13,11 @@ def auth_access(ck,cs,screen_name,callback_url):
     # screen_nameからuser_idを検索
     auth = tweepy.OAuthHandler(ck, cs, callback_url)
     api = tweepy.API(auth, wait_on_rate_limit=True)
-    user = api.get_user(screen_name)
+    try:
+        user = api.get_user(screen_name)
+    except tweepy.TweepError:
+        return json.dumps({'status_code': 50 , 'message' : 'User not found.'})
+
     user_id = str(user.id)
     
     with closing(conn_f()) as conn:
@@ -28,7 +32,7 @@ def auth_access(ck,cs,screen_name,callback_url):
                         cursor.execute(sql,(user_id,))
                         random_key = cursor.fetchone()
                         conn.commit()
-                        return json.dumps({'status_code': 200 , 'message':'OK' , 'random_key' : random_key[0]})
+                        return json.dumps({'status_code': 200 , 'message':'OK' , 'context':{'random_key' : random_key[0],}})
                     except MySQLdb.Error:
                         return json.dumps({'status_code':1002,'message' : 'MySQL error'})
                         # user_idがDBにない場合は、user_id,screen_name,取得したrequest_token,作成したランダム文字列をDBへ格納する↓

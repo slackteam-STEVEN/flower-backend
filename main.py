@@ -1,4 +1,5 @@
 from flask import Flask, redirect, request
+from flask_cors import CORS
 import configparser
 import tweepy
 import json
@@ -14,6 +15,7 @@ import destroy_follow
 
 
 app = Flask(__name__)
+CORS(app) 
 
 key_ini = configparser.ConfigParser()
 key_ini.read('key.ini')
